@@ -3,3 +3,4 @@ scikit-learn
 dotenv
 vectordb2
 matplotlib
+umap-learn

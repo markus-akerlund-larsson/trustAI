@@ -8,8 +8,9 @@ import json
 import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import normalize
+from umap import UMAP
 
-
+np.random.seed(42)
 load_dotenv()
 OpenAI.api_key = os.environ.get("OPENAI_API_KEY")
 client = OpenAI()
@@ -23,11 +24,11 @@ def load_files(path):
                 result.append(f.read())
     return result
 
-def split_sliding_chars(str, winsize=300, overlap=40):
-    return [str[i:i + winsize] for i in range(len(str) - overlap)]
-
-def split_sliding_words(text, winsize=160, overlap=80):
+def split_sliding_words(text, winsize=160, overlap=40):
     words = text.split()
+    if(len(words) <= winsize):
+        return [text]
+
     step = winsize - overlap
     windows = []
 
@@ -48,60 +49,107 @@ def get_embeddings(texts):
      )
     return np.array([item.embedding for item in response.data])
 
-def split_all(strs):
+def get_embeddings_batched(texts, batch_size=100):
+    all_embeddings = []
+    for i in range(0, len(texts), batch_size):
+       batch = texts[i:i + batch_size]
+       all_embeddings.extend(get_embeddings(batch))
+    return np.array(all_embeddings)
+
+def get_summary(texts):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Rewrite the contents of these texts into one, coherent text of similar length. No information not contained in the is allowed in the summary. And information in the texts must be included in the summary. The texts to summarize:"},
+            {"role": "user", "content": "\n---\n".join(texts)}
+        ]
+    )
+    return response.choices[0].message.content
+
+def get_category(texts):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Create a 1 to 3 word name for the topic of these texts. Fewer words is better. The texts to:"},
+            {"role": "user", "content": "\n---\n".join(texts)}
+        ]
+    )
+    return response.choices[0].message.content
+
+def split_all(strs, winsize=160, overlap=40):
     res = []
     for str in strs:
-        res += split_sliding_words(str)
+        res += split_sliding_words(str, winsize, overlap)
     return res
 
-def save_clusters(texts, labels, filename="res.json"):
+def group_clusters(texts, labels):
     clusters = {}
-
     for text, label in zip(texts, labels):
         if str(label) not in clusters:
-            clusters[str(label)] = []
-        clusters[str(label)].append(text)
+            clusters[str(label)] = {
+                "texts": [],
+            }
+        clusters[str(label)]["texts"].append(text)
+    return clusters
 
+def save_clusters(clusters, filename="res.json"):
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(clusters, f, ensure_ascii=False, indent=2)
+
+def add_summary(clusters):
+    countdown = 0
+    for cluster, contents in clusters.items():
+        if cluster == "-1":
+            continue
+        countdown += 1
+        print(f"{countdown}/{len(clusters)}")
+        clusters[cluster]["summary"] = get_summary(contents["texts"])
+        clusters[cluster]["category"] = get_category(contents["texts"])
+    return clusters
 
 texter_python = load_files("./texter_python_control")
 texter_gen = load_files("./texter_gen")
 
-wins = split_all(texter_python)
+pwins = split_all(texter_python)
+gwins = split_all(texter_python, 40, 10)
+
+wins = gwins
+
 embeddings_map = {}
 embeddings = []
 
-countdown = len(wins)
 
 embeddings = get_embeddings(wins)
 embeddings = normalize(embeddings)
 
-tsne = TSNE(n_components=2, metric='cosine').fit_transform(embeddings)
-plt.figure(figsize=(6, 6))
-plt.scatter(tsne[:, 0], tsne[:, 1])
-plt.title("t-SNE")
-plt.show()
-
 pca = PCA(n_components=3)
 reduced_embeddings = pca.fit_transform(embeddings)
 
+umap = UMAP(n_neighbors=15, n_components=5, metric='cosine')
+umap_embeddings = umap.fit_transform(embeddings)
+
 cosine_hdbscan = hdbscan.HDBSCAN(
-    min_cluster_size=2,
+    min_cluster_size=3,
     metric='cosine',
 )
 
 euclidean_hdbscan = hdbscan.HDBSCAN(
-    min_cluster_size=2,
+    min_cluster_size=3,
     metric='euclidean',
 )
+# silhouette score?
 
 cs_labels = cosine_hdbscan.fit_predict(embeddings)
-eu_labels = euclidean_hdbscan.fit_predict(embeddings)
-reduced_labels = cosine_hdbscan.fit_predict(reduced_embeddings)
-tsne_labels = cosine_hdbscan.fit_predict(tsne)
+cs_clusters = group_clusters(wins, cs_labels)
+#add_summary(cs_clusters)
+save_clusters(cs_clusters, "cosine.json")
 
-save_clusters(wins, cs_labels, "cosine.json")
-save_clusters(wins, eu_labels, "euclidean.json")
-save_clusters(wins, reduced_labels, "reduced.json")
-save_clusters(wins, tsne_labels, "tsne.json")
+pca_labels = euclidean_hdbscan.fit_predict(reduced_embeddings)
+pca_clusters = group_clusters(wins, pca_labels)
+#add_summary(pca_clusters)
+save_clusters(pca_clusters, "pca.json")
+
+umap_labels = euclidean_hdbscan.fit_predict(umap_embeddings)
+umap_clusters = group_clusters(wins, umap_labels)
+#add_summary(umap_clusters)
+save_clusters(umap_clusters, "umap.json")
