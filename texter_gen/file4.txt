@@ -1,0 +1,1 @@
+Det är alldeles för liten temperaturskillnad mellan in- och utgång. När det blir så här brukar det vara igensatt någonstans. Jag stänger av, isolerar och kör en backspolning. Filtret är fullt av svart slam, så det är nog magnetit som byggts upp. Efter rengöringen ökar temperaturdifferensen som den ska. Vi behöver nog lägga in ett tätare intervall för rensning här.

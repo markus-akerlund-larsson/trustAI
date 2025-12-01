@@ -1,0 +1,1355 @@
+Python’s control flow structures allow you to dictate the order in which statements execute in your program. You can do this by using structures like conditionals, loops, and others.
+
+Normally, your code executes sequentially. You can modify this behavior using control flow structures that let you make decisions, run specific pieces of code in response to certain conditions, repeat a code block several times, and more.
+
+Knowing about control flow structures is a fundamental skill for you as a Python developer because they’ll allow you to fine-tune how your programs behave.
+
+By the end of this tutorial, you’ll understand that:
+
+    Control flow in Python refers to the order in which code statements are executed or evaluated.
+    Common control flow statements in Python include conditionals with the if, elif, else keywords, loops with for and while, exception handling with try … except, and structural pattern matching with match … case.
+    Control flow structures in Python let you make decisions, repeat tasks, and handle exceptions, enhancing the dynamism and robustness of your code.
+
+To dive deeper into Python’s control flow, explore how these constructs allow you to write more dynamic and flexible programs by making decisions and handling repetitive tasks efficiently.
+
+Most programming languages, including Python, execute code sequentially from the top of the source file to the bottom, line by line. This way of running code is entirely logical. It’s like following a series of steps in order. However, what if you’re solving a problem with two or more action paths that depend on the result of evaluating a given condition?
+
+For example, say that you’re building an online store and need to implement a feature that decides whether a customer is eligible for free shipping. You’ve decided that if the order is greater than $150.00, then the customer gets free shipping. In this situation, you have two action paths:
+
+    If the order is less than $150.00, then the customer doesn’t get free shipping.
+    If the order is equal to or greater than $150.00, then the customer gets free shipping.
+
+Now, think of a way you could do this with sequential statements. It isn’t an easy task, right? You’d need something that allows you to check the order and decide what course of action to take. That’s exactly what a conditional statement lets you do:
+
+>>> order_total = 215.00
+
+>>> if order_total >= 150:
+...     print("You got free shipping!")
+... else:
+...     print("The shipping fee is $5.00")
+...
+You got free shipping!
+
+Note how the code isn’t executed sequentially. Instead, the execution path depends on the condition’s result. Statements and syntax constructs that allow you to alter the normal execution flow as you did in the example above are known as control flow structures.
+
+Note: In programming, the ability of a program to choose between multiple paths of execution based on certain conditions is known as branching.
+
+In programming, the term control flow refers to the order in which individual statements are executed or evaluated within a program. As you already know, the normal flow of execution is sequential. However, you can alter this by using control flow statements, which include conditionals, loops, and several others.
+
+Here’s another example. This time, you need to repeat a task several times. You can do this by duplicating the same line of code as many times as needed:
+greeting.py
+
+print("Hello!")
+print("Hello!")
+print("Hello!")
+
+This code works. However, repeating the same code several times is error-prone and introduces maintainability issues. Additionally, what if you don’t know the number of repetitions beforehand? In this situation, a loop will save you:
+
+>>> for _ in range(3):
+...     print("Hello!")
+...
+Hello!
+Hello!
+Hello!
+
+In this example, you use a for loop to run the code three times. This code is much more elegant, flexible, and less repetitive.
+
+Control flow statements like these let you make decisions, repeat tasks, and handle exceptions, making your code more dynamic and powerful. In short, they let you customize the control flow of your programs. In the rest of this tutorial, you’ll dive into Python’s most commonly used control flow statements.
+
+Using Conditional Statements
+
+You took a quick peek at conditional statements in the previous section. A conditional statement is a syntax construct that lets you execute certain code blocks only when a specific condition is true, while skipping them when the condition is false. It allows your programs to respond to different situations rather than just running sequentially.
+
+Note: To dive deeper into conditionals, check out the Conditional Statements in Python tutorial.
+
+Conditional statements are how you make decisions in your code. They let you control the execution flow based on whether a condition is evaluated as true or false. In the following sections, you’ll learn about conditionals and how to use them in your code.
+Using if to Make Decisions
+
+To write a conditional statement in Python, you use the if keyword. The basic syntax is as shown below:
+
+if condition:
+    <block>
+
+When the execution flow reaches the if header, the condition is evaluated. If it’s true, then the code block immediately following runs. Otherwise, the execution jumps to the next unindented statement.
+
+To illustrate how this works in practice, say that you’re coding an app to control the speed of a smart car. You have a function that reads the speedometer, and you want to write a function that warns you if you exceed the speed limit. Here’s the code:
+speed.py
+
+import random
+
+def check_speed_limit(limit=80):
+    speed = read_speedometer()
+    if speed > limit:
+        print("You are over the speed limit! Slow down.")
+
+def read_speedometer():
+    speed = random.randint(30, 130)
+    print(f"Speedometer reading: {speed} km/h")
+    return speed
+
+check_speed_limit()
+
+Inside check_speed_limit(), you first get the speed reading. Then, you use an if statement to compare the current speed with the limit for the actual road. If the speed exceeds the limit, then the if block runs, and you get a warning message. If the speed is less than the limit, then nothing happens.
+Nesting Conditionals and Using Boolean Operators
+
+Sometimes, you need to check multiple conditions. You can do it by nesting multiple conditionals. For example, say that you need to check whether a number falls within the interval from 0 to 10. You can do this with the following nested conditionals:
+
+>>> number = 7
+
+>>> if number > 0:
+...     if number < 10:
+...         print("The number is between 0 and 10!")
+...
+The number is between 0 and 10!
+
+First, you check if the number is greater than 0, and then if it’s less than 10. When the code runs, both conditions are true because the input number is 7. This code works. However, using Boolean operators to combine conditions often provides a cleaner solution.
+
+For example, you can get the same result using the and operator to combine the conditions in one:
+
+>>> if number > 0 and number < 10:
+...     print("The number is between 0 and 10!")
+...
+The number is between 0 and 10!
+
+This code works the same, but it’s flatter and cleaner. It aligns with the Zen of Python’s principle that says: “Flat is better than nested.”
+
+Note: The condition in the example above is demonstrative of how to use Boolean operators. For this specific example, the Pythonic and recommended way to write the condition would be the following:
+
+>>> if 0 < number < 10:
+...    print("The number is between 0 and 10!")
+...
+The number is between 0 and 10!
+
+In this version, the condition uses what’s known as operator chaining, which provides an elegant way to check whether a value is within a given interval.
+
+Logical expressions involving and, or, and not behave as shown in the table below:
+Operator 	Syntax 	Result
+and 	condition_0 and condition_1 	• A truthy value if both conditions are True
+• A falsy value otherwise
+or 	condition_0 or condition_1 	• A truthy value if at least one condition is True
+• A falsy value if both are False
+not 	not condition_0 	• A truthy value if the condition is False
+• A falsy value if the condition is True
+
+This table summarizes the truth value of conditions created using logical operators with Boolean operands. Note that you can chain multiple instances of an operator to create even more complex expressions. You can also combine operators as needed.
+
+Consider the following example that simulates a login process:
+
+>>> username = "jane"
+>>> password_correct = True
+>>> two_factor_enabled = True
+>>> two_factor_passed = True
+
+>>> if password_correct and (not two_factor_enabled or two_factor_passed):
+...     print("Login successful.")
+...
+Login successful.
+
+In this example, you combine conditions with and, not, and or. Note that you can use parentheses to group conditions and make the whole expression more readable.
+
+Note: To dive deeper into Python’s logical operators, check out the following resources:
+
+    Using the “and” Boolean Operator in Python
+    Using the “or” Boolean Operator in Python
+    Using the “not” Boolean Operator in Python
+
+As you can see, Boolean operators let you write concise and straightforward conditions for your if statements, improving the decision-making process in your code.
+
+Finally, note that when you have overcomplicated conditions with several Boolean operators, using nested conditionals may be the way to go if you want to write readable code.
+
+Chaining Multiple Conditions With elif
+
+Often, it’s useful to check a concrete value or expression against multiple expected values and take different actions depending on which one it matches. Python’s elif clause offers a clean way to handle these types of situations.
+
+The general syntax for using the elif clause is shown below:
+
+if condition_0:
+    <block_0>
+elif condition_1:
+    <block_1>
+...
+elif condition_n:
+    <block_n>
+
+You can have as many elif clauses as you need. Typically, the conditions in each clause check for a different result on a particular expression. In other words, the conditions are often semantically similar.
+
+For example, say that you want to decide which task to execute on a given day of the week. You can use a series of elif clauses that check the current day, as in the example below:
+
+>>> day = "Wednesday"
+
+>>> if day == "Monday":
+...     print("Work on cool Python content!")
+... elif day == "Tuesday":
+...     print("Team meeting at 9 AM.")
+... elif day == "Wednesday":
+...     print("Hang out with the community.")
+... elif day == "Thursday":
+...     print("Work on cool Python content!")
+... elif day == "Friday":
+...     print("Wrap up and reviews.")
+... elif day == "Saturday":
+...     print("Enjoy with your family!")
+... elif day == "Sunday":
+...     print("Rest and recharge.")
+...
+Hang out with the community.
+
+In this example, you have a main condition in the if header that checks for Monday. Then you have multiple elif clauses that check for the remaining days. Each branch runs a different task depending on the current day.
+
+The difference between a chain of elif clauses and multiple if statements is often a point of confusion. A chain of elif clauses is suitable for handling a fixed number of mutually exclusive conditions, such as checking the current day of the week shown in the example above.
+
+In contrast, a chain of pure if statements lets more than one code block run in case of overlapping or disjoint conditions that can be true at a given time. Consider the following example:
+
+temperature = 75
+humidity = 60
+
+if temperature > 70:
+    print("It's warm outside.")
+if humidity > 50:
+    print("It's humid outside.")
+
+In this example, both conditions are true, so both code blocks run. If you put the second condition in an elif clause, then the associated code will never run because in the if … elif construct, only the first branch with a true condition will run.
+Running a Default Code Block With else
+
+Another common situation when working with conditionals is to have a default code block. In other words, a code block that runs when none of the tested conditions are true. You can implement this default course of action with the else clause.
+
+In this case, the syntax is as follows:
+
+if condition:
+    <block>
+else:
+    <default_block>
+
+In this construct, if the main condition is false, then the else block runs. You can insert elif clauses in this syntax as well. However, the else clause must always be the last one to ensure that all conditions are checked first. Placing it before an elif clause would cause a syntax error.
+
+As a quick example, say that you want to write a conditional statement that checks whether a number is even:
+
+>>> number = 7
+
+>>> if number % 2 == 0:
+...     print("The number is even.")
+... else:
+...     print("The number is odd.")
+...
+The number is odd.
+
+In this example, the condition checks if the current number is even using the modulo operator. If the condition is false, then the execution falls through to the else block. This behavior is consistent with the fact that a number can be even or odd. So in this example, being odd is the default course of action.
+
+Conditional Expressions
+
+Python has a syntax construct known as conditional expressions. This construct is inspired by the ternary operator of programming languages like C:
+
+condition ? value_if_true : value_if_false
+
+This construct evaluates to value_if_true if the condition is true, and otherwise evaluates to value_if_false. The equivalent Python syntax is the following:
+
+value_if_true if condition else value_if_false
+
+This returns value_if_true if the condition is true and value_if_false otherwise. Consider the following example:
+
+>>> def calculate_shipping(order_total):
+...     return 0 if order_total >= 150 else order_total * 0.05
+...
+
+>>> print(f"Shipping cost: ${calculate_shipping(200)}")
+Shipping cost: $0
+
+>>> print(f"Shipping cost: ${calculate_shipping(100)}")
+Shipping cost: $5.0
+
+In calculate_shipping(), you use a conditional expression to check if the order total is greater than or equal to 150. If that’s the case, the shipping cost is 0. Otherwise, a 5% shipping fee is applied.
+Repeating Code With for and while Loops
+
+In programming, repeating a piece of code several times is often useful. This is where loop constructs come into the scene. Loops are a common control flow structure that you’ll find in most programming languages. Python provides two loops:
+
+    for loops are mostly used to iterate a known number of times, which is common when you’re processing data collections with a specific number of data items.
+    while loops are commonly used to iterate an unknown number of times, which is useful when the number of iterations depends on a given condition.
+
+In the following sections, you’ll explore for and while loops, how they work, and how to use them effectively. You’ll also learn about statements like break and continue that allow you to tweak a loop’s behavior. Finally, you’ll learn about comprehensions, which allow for data processing in a concise way.
+The for Loop to Traverse Iterables
+
+When you need to iterate over the data items in a collection, you typically go with a for loop, which is specifically designed for this task. Python’s for loop works much like the foreach loop in other programming languages. Here’s the basic syntax:
+
+for item in iterable:
+    <block>
+
+You start the loop with the for keyword. Then, you have the loop variable, item, which holds the current value in the target data collection. The iterable variable can hold any Python object that supports iteration, such as lists, tuples, strings, dictionaries, and sets.
+
+In each iteration, the loop pulls a new item from the target iterable, allowing you to process the item as needed. Once the loop finishes iterating over the data, the execution flow jumps to the next statement after the loop.
+
+Note: To learn more about for loops, check out the Python for Loops: The Pythonic Way tutorial.
+
+Here’s a quick example of a for loop in Python:
+
+>>> colors = ["red", "green", "blue", "yellow"]
+
+>>> for color in colors:
+...     print(color)
+...
+red
+green
+blue
+yellow
+
+In this example, you use a for loop to traverse a list of color names. The loop body consists of a call to print() that displays each color name on the screen. Note how readable this loop is. It almost reads as plain English.
+
+In practice, you may find several situations where you have an iterable whose name is a plural noun, like colors in this example. In those cases, a recommended practice is to use the singular form to name the loop variable—color in this example.
+
+Note: Python also has async for loops whose basic syntax is as follows:
+
+async for item in async_iterable:
+    <block>
+
+These loops are useful when you need to iterate over asynchronous iterables in asynchronous code. To learn more about them, check out the Asynchronous Iterators and Iterables in Python tutorial.
+
+Python’s for loop allows you to traverse data collections in a readable and clean way. During the iteration, you can perform actions with the data items, which is often a requirement in programming.
+
+Here’s an example of a loop that traverses an iterable of numbers, and computes and prints the square of each number:
+
+>>> numbers = [2, 3, 4, 5, 6]
+
+>>> for number in numbers:
+...     print(number**2)
+...
+4
+9
+16
+25
+36
+
+In each iteration, this loop takes the current number, computes its square value, and displays the result to the screen. Here, you’re running a computation with each value in the iterable.
+
+The while Loop for Conditional Iteration
+
+Unlike for loops, which are designed for traversing iterables of data, while loops are appropriate for situations where you need to iterate until a given condition becomes false or while the condition is true. These loops are also useful for potentially infinite loops, such as event loops in GUI applications or asynchronous code.
+
+Note: To dive deeper into while loops, check out the Python while Loops: Repeating Tasks Conditionally tutorial.
+
+The basic syntax of a Python while loop is shown below:
+
+while condition:
+    <block>
+
+You start the loop with the while keyword, followed by a condition. This condition is checked before each iteration, including the very first one. If the condition is true, then the loop’s code block executes. After the block finishes running, the condition is checked again. This cycle continues until the condition evaluates as false, at which point the program exits the loop and proceeds with the next statement.
+
+Note: Unlike other programming languages like C, Python doesn’t have a do-while loop construct. However, you can emulate this type of loop using some tricks. To learn about these, check out the How Can You Emulate Do-While Loops in Python? tutorial.
+
+Here’s a quick example of a while loop:
+
+>>> user_input = ""
+
+>>> while user_input != "exit":
+...     user_input = input("Type something: ")
+...     print(f"You typed: {user_input}")
+...
+Type something: Hello
+You typed: Hello
+Type something: Pythonista!
+You typed: Pythonista!
+Type something: exit
+You typed: exit
+
+In this example, the loop repeatedly takes user input and prints it to the screen. It repeats its code block until you type in exit, which makes the loop condition become false.
+
+Another common use case of while loops is when you need to wait for input or events an undefined number of times. This is common in games and GUI applications where the interface keeps waiting, capturing, and processing user events, like mouse clicks, key presses, and others.
+
+For example, here’s a short app that implements a number-guessing game using a while loop:
+number_guesser.py
+
+from random import randint
+
+LOW, HIGH = 1, 10
+
+secret_number = randint(LOW, HIGH)
+clue = ""
+
+# Game loop
+while True:
+    guess = input(f"Guess a number between {LOW} and {HIGH} {clue} ")
+    number = int(guess)
+    if number > secret_number:
+        clue = f"(less than {number})"
+    elif number < secret_number:
+        clue = f"(greater than {number})"
+    else:
+        break
+
+print(f"You guessed it! The secret number is {number}")
+
+In this example, you set the loop condition to True, which enables the loop to run indefinitely. In this case, you need the loop to run until the user guesses the secret number. The loop’s code block captures the user’s guess and processes it to determine whether it’s a match.
+
+Note: A loop with a condition that’s always true represents an infinite loop. To intentionally create this type of loop in Python, you’ll typically use the while True: header.
+
+In each iteration, the loop gives the user some clues about the secret number. This is the ideal game—you’ll always win unless you press the Ctrl+C key combination to terminate the code execution with a KeyboardInterrupt exception.
+The break and continue Statements
+
+Both for and while loops in Python can use the break and continue statements, which you typically wrap in a conditional. These statements do the following:
+
+    break terminates the loop execution and makes your program jump to the first statement immediately after the loop body.
+    continue skips the remaining code in the current iteration by immediately jumping back to the loop header.
+
+Here’s the syntax that you typically use to include break and continue in a for loop:
+
+# General syntax for break
+for item in iterable:
+    [block]
+    if break_condition:
+        [block]
+        break
+    [block]
+
+# General syntax for continue
+for item in iterable:
+    [block]
+    if continue_condition:
+        [block]
+        continue
+    <block>
+
+In the case of break, the code blocks before and after the statement are optional. However, in most cases, you would have at least one of them so that your loop does something apart from breaking out. The square brackets in the syntax express that these code blocks are optional.
+
+The break statement jumps out of the loop, so any code after that statement won’t run, and the loop will terminate early.
+
+In contrast, it doesn’t make much sense to have a continue statement without a code block after it. In the end, the intention of this statement is to skip some code. So, the code blocks before the statement are optional, and the code block after is logically required. That’s why the syntax uses the angle brackets, to signal that the code block is needed in practice, even if it’s not strictly enforced by Python.
+
+You shouldn’t have code after either of these statements if that code is at the same level of indentation. The reason is that the code you place after break or continue at the same level of indentation will never run. It’ll be dead code as you’ll see in a moment.
+
+Here’s the syntax for a while loop that uses break and continue:
+
+# General syntax for break
+while loop_condition:
+    [block]
+    if break_condition:
+        [block]
+        break
+    [block]
+
+# General syntax for continue
+while loop_condition:
+    [block]
+    if continue_condition:
+        [block]
+        continue
+    <block>
+
+In this case, the statements work the same way as in a for loop. It’s important to note that you typically won’t include a break or continue statement right in the loop body without wrapping it in a conditional statement.
+
+For example, if you include a break statement directly in the loop body, then the loop will run until it finds that statement and terminates immediately:
+
+>>> for i in range(5):
+...     print("Before break")
+...     break
+...     print("After break")
+...
+Before break
+
+In this example, the code before break runs once. The code after break never runs. It’s unreachable or dead code, and your code linter will probably flag it as an issue.
+
+So, you’ll have a loop that always runs a single time. Similarly, if you place a continue statement directly in the loop body, then the code after that statement will never run:
+
+>>> for i in range(5):
+...     print("Before continue")
+...     continue
+...     print("After continue")
+...
+Before continue
+Before continue
+Before continue
+Before continue
+Before continue
+
+In this example, the code after the continue statement is again unreachable, or dead code. However, the loop still iterates as many times as you expected.
+
+Finally, you can’t have a break or continue statement outside of a loop:
+
+>>> break
+  ...
+SyntaxError: 'break' outside loop
+
+>>> continue
+  ...
+SyntaxError: 'continue' not properly in loop
+
+In these examples, you try to use the statement outside a loop. In both cases, you get a SyntaxError exception with an appropriate error message.
+
+The else Clause in Loops
+
+Python’s for and while loops have an else clause similar to the else in conditional statements. This may be unexpected for people coming from other programming languages. Python might be the only mainstream programming language with an else clause in its loops.
+
+The syntax to add an else is straightforward, as it’s in a conditional statement:
+
+for item in iterable:
+    <block>
+else:
+    <block>
+
+while condition:
+    <block>
+else:
+    <block>
+
+To add an else clause to one of your loops, you just need the else keyword at the end of the loop body, followed by a colon and an indented code block. Note that the else keyword must be at the same indentation level as the loop heading.
+
+Now, how does the else clause work in a loop? The code block under an else in a loop will run only if the loop terminates naturally without encountering a break statement. In a for loop, it executes when the target data is over. In a while loop, it runs when the condition becomes false.
+
+In practice, it doesn’t make much sense to add an else clause to a loop that doesn’t have a break statement. If that’s the case, you’ll get the same result by placing the code right after the loop and at the same indentation level as the loop header.
+
+Common use cases of an else clause in a loop include:
+
+    Searching for something: Allows you to handle the case when the loop doesn’t find the target item.
+    Doing data validation: Lets you confirm that all data items passed the validation.
+    Handling empty data collections gracefully: Allows you to provide a fallback behavior when the input iterable is empty.
+
+Here’s a quick example of a for loop that searches for a value in a list of numbers:
+
+>>> numbers = [1, 3, 5, 9]
+
+>>> target = 7
+>>> for number in numbers:
+...     if number == target:
+...         print("Found!")
+...         break
+... else:
+...     print("Not found.")
+...
+Not found.
+
+>>> target = 3
+>>> for number in numbers:
+...     if number == target:
+...         print("Found!")
+...         break
+... else:
+...     print("Not found.")
+...
+Found!
+
+In the first loop, the target value is 7. Since this value isn’t in the list, the loop terminates naturally, and the code under the else clause runs, letting you know that the value wasn’t found. In the second loop, the target value is 3, which is in the list. In this case, the break statement terminates the loop, and the else clause doesn’t run.
+Nested Loops
+
+Sometimes, you may need to nest a loop inside another loop. Nested loops may be helpful when you need to process lists of lists with for loops. For example, say that you have a matrix of numbers and want to create another matrix containing square values. You can do this using nested for loops as shown below:
+
+>>> matrix = [
+...     [9, 3, 8, 3],
+...     [4, 5, 2, 8],
+...     [6, 4, 3, 1],
+...     [1, 0, 4, 5],
+... ]
+
+>>> squares = []
+>>> for row in matrix:
+...     squares_row = []
+...     for number in row:
+...         squares_row.append(number**2)
+...     squares.append(squares_row)
+...
+
+>>> squares
+[
+    [81, 9, 64, 9],
+    [16, 25, 4, 64],
+    [36, 16, 9, 1],
+    [1, 0, 16, 25]
+]
+
+In this example, you have an outer loop that iterates over the rows of the matrix. Then, you have a nested loop that squares the numbers in the current row and adds them to a new list. Finally, you add the new list to the matrix of square values.
+
+Using nested loops is sometimes a good solution. However, more than two levels of nesting might make your code hard to read and understand.
+
+Note: To learn more about using nested loops, check out the Nested Loops in Python tutorial.
+
+Apart from the readability issue of nested loops, you also need to know that nested loops can increase the time complexity of your code, potentially affecting performance. While they aren’t inherently inefficient, you might encounter bottlenecks when each loop involves a large number of iterations.
+Comprehensions
+
+Comprehensions are a concise way to create lists, dictionaries, and sets in Python. They’re like a compact for loop that builds and returns a new list, dictionary, or set, depending on the type of comprehension you’re using.
+
+The general use case of a comprehension is to create transformed data collections from existing ones. To do this, the comprehension allows you to apply a specific operation to each data item.
+
+Here’s the syntax for the different types of comprehensions in Python:
+
+# List comprehension
+[expression for item in iterable [if condition]]
+
+# Set comprehension
+{expression for item in iterable [if condition]}
+
+# Dictionary comprehension
+{key_expression: value_expression for item in iterable [if condition]}
+
+The three comprehension constructs are syntactically similar. The first part consists of an expression—or two in the case of dictionaries—that transforms the original data to obtain a new item. Then, you have a construct that mimics the header of a regular for loop, which is the part that runs the iteration.
+
+Finally, you have an optional condition that you’ll use only when you need to filter your data by checking some condition. Note that this part is pretty similar to the header of an if statement.
+
+Note: To learn more about comprehensions in Python, check out the following tutorials:
+
+    When to Use a List Comprehension in Python
+    Python Set Comprehensions: How and When to Use Them
+    Python Dictionary Comprehensions: How and When to Use Them
+
+To explore how comprehension works, say that you have a list of email addresses that were stored without validation, and look like the following:
+
+>>> emails = [
+...     " alice@example.org ",
+...     "BOB@example.com",
+...     "charlie@EXAMPLE.com",
+...     "David@example.net",
+...     " bob@example.com",
+...     "JohnDoe@example.com",
+...     "DAVID@Example.net"
+... ]
+
+You want to clean this list and think of using a list comprehension to apply some transformations to each address using string manipulation methods. For example, you can remove leading and trailing spaces and convert all the letters to lowercase:
+
+>>> clean_emails = [email.strip().lower() for email in emails]
+>>> clean_emails
+[
+    'alice@example.org',
+    'bob@example.com',
+    'charlie@example.com',
+    'david@example.net',
+    'bob@example.com',
+    'johndoe@example.com',
+    'david@example.net'
+]
+
+In this example, you use a list comprehension to transform your original data using the .strip() and .lower() methods. Your list of emails now looks better. However, you still have an issue. The list has repeated addresses, and you want them to be unique.
+
+In this situation, instead of using a list comprehension, you may benefit from using a set comprehension like the following:
+
+>>> unique_emails = {email.strip().lower() for email in emails}
+>>> unique_emails
+{
+    'bob@example.com',
+    'david@example.net',
+    'alice@example.org',
+    'charlie@example.com',
+    'johndoe@example.com'
+}
+
+Now you have a completely clean set of email addresses. In this example, you’re taking advantage of the fact that sets are collections of unique elements. Keep in mind that sets are unordered, so the arrangement of the email addresses in your output may vary.
+
+Note: To learn more about sets, check out the Sets in Python tutorial.
+
+Even though comprehensions are expressions that return collections rather than a classical control flow structure, they iterate over the input data as a for loop would. In some situations, you’ll benefit from replacing a for loop with a comprehension to produce conciser and more Pythonic code.
+
+Repeating Code Through Recursion
+
+Recursion is another resource that you can use to control the execution flow of your Python code. Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem. In a sense, recursion is like iteration because it allows you to repeat a specific code block.
+
+Note: To dive deeper into recursion, check out the following tutorials:
+
+    Recursion in Python: An Introduction
+    Thinking Recursively in Python
+
+When writing a recursive function, you need a base case that breaks the recursion and a recursive case that makes the recursive calls. For example, consider the following function that generates a countdown using recursion:
+
+>>> def countdown(n):
+...     print(n)
+...     if n == 0:
+...         return  # Base case
+...     else:
+...         countdown(n - 1)  # Recursive case
+...
+
+>>> countdown(5)
+5
+4
+3
+2
+1
+0
+
+In this function, the base case occurs when n is zero, at which point the function returns and the recursion stops. Next, you have the recursive case, where the function calls itself. The argument is n minus 1, so it moves closer to the base case in each recursion.
+
+Note that you can get the same result with a loop:
+
+>>> def countdown(n):
+...     while n >= 0:
+...         print(n)
+...         n -= 1
+...
+
+>>> countdown(5)
+5
+4
+3
+2
+1
+0
+
+Recursion can be great for navigating nested structures, such as file systems and JSON trees. However, it can be inefficient because recursive calls are costly regarding memory usage and execution time.
+
+Python has a default recursion limit of 1000 recursive calls. If you exceed this limit, then you’ll get a RecursionError. This could be an issue if you want to generate a countdown that starts at 2000, for example.
+
+Note: You can change the recursion limit if you need to. Here’s how:
+
+>>> import sys
+
+>>> sys.getrecursionlimit()  # Check the current limit
+1000
+
+>>> sys.setrecursionlimit(3000)  # Update the limit
+>>> sys.getrecursionlimit()
+3000
+
+In this example, you use the getrecursionlimit() function to check the current recursion limit. Then, you set the limit to 3000 recursions using the setrecursionlimit() function.
+
+Finally, recursive functions can be hard to debug because tracing the calls isn’t always straightforward. Multiple function calls are active at once in the call stack, which can make the execution flow difficult to follow.
+Exploring Other Structures Related to Control Flow
+
+While conditionals, loops, and recursion are fundamental control flow constructs in Python, you’ll also find other language features that influence how your programs flow. In this section, you’ll explore the following statements that significantly impact how and when your code runs:
+
+    return
+    yield
+    raise
+    with
+
+Each of these statements helps you control the execution flow of your programs, allowing you to write clearer, safer, more maintainable, and more Pythonic code.
+The return Statement
+
+The return statement immediately exits a function and optionally returns a value. A function can have multiple return statements, but depending on the flow of execution, only one of them will execute in a given function call. The return statement not only allows the function to return an optional value, but also controls the function’s execution flow by terminating the function early when needed.
+
+Note: To learn more about return, check out The Python return Statement: Usage and Best Practices.
+
+When a function has multiple return paths and the execution goes through one of them, the rest of the paths won’t execute. For example, say you’re practicing for a Python coding interview. You’re implementing a function that tackles the FizzBuzz challenge, where you return fizz for numbers divisible by three, buzz for those divisible by five, and fizz buzz for those divisible by both three and five:
+
+>>> def fizzbuzz(number):
+...     if number % 15 == 0:
+...         return "fizz buzz"
+...     elif number % 3 == 0:
+...         return "fizz"
+...     elif number % 5 == 0:
+...         return "buzz"
+...     else:
+...         return number
+...
+
+>>> for number in range(5):
+...     fizzbuzz(number)
+...
+'fizz buzz'
+1
+2
+'fizz'
+4
+
+This function has multiple return paths, each depending on a condition. For example, when the number is only divisible by 3, then the second condition is true, and the function returns fizz. The rest of the code doesn’t run because the function’s execution has terminated.
+
+The yield Statement
+
+The yield statement allows you to define generator functions that return an iterator. This iterator yields items on demand. In other words, you can retrieve items from that iterator at different moments in your code’s execution. This is possible because the yield statement pauses the item generation until you demand a new item.
+
+Generators provide a memory-efficient way to iterate over large datasets because instead of loading all the data into memory, they only load the currently demanded item.
+
+Note: To learn more about yield, check out the How to Use Generators and yield in Python tutorial.
+
+The yield statement also provides a mechanism for controlling the code’s execution flow. For example, say you want to write a function that takes a list of numbers and returns an iterator that yields a message showing the number and whether it’s even or odd.
+
+Here’s a possible implementation:
+
+>>> def odd_even(numbers):
+...     for number in numbers:
+...         if number % 2 == 0:
+...             yield f"{number} is even"
+...         else:
+...             yield f"{number} is odd"
+...
+
+>>> numbers = [2, 2, 3, 11, 4, 5, 7, 4]
+>>> generator = odd_even(numbers)
+
+>>> next(generator)
+'2 is even'
+
+>>> next(generator)
+'2 is even'
+
+>>> next(generator)
+'3 is odd'
+
+>>> for result in generator:
+...     print(result)
+...
+11 is odd
+4 is even
+5 is odd
+7 is odd
+4 is even
+
+The odd_even() function can take one of two possible execution paths. If the number is even, then it runs the if block, yielding the appropriate message. If the number is odd, then it runs the else block. In any case, the yield statement produces a value, pausing the execution until you request another value.
+
+You can call the function to obtain a generator object. Using the built-in next() function, you can retrieve items from the generator. After each call, the generator’s execution is paused until you demand another item. Note that the yield statement only pauses the item generation—it doesn’t pause the global execution of your code.
+
+Using the generator in a for loop causes the loop to request items one by one until the data runs out and the generator is exhausted.
+The raise Statement
+
+The raise statement interrupts the execution of a piece of code by throwing an exception. It lets you explicitly signal that an error or an unusual condition has occurred in your code. This is also a technique that you can use to control the execution flow of your code.
+
+Note: To learn more about raise, check out the Python’s raise: Effectively Raising Exceptions in Your Code tutorial.
+
+As an example of using raise to control the execution flow, say that you want to write a function to determine whether a given number is prime. Here’s a possible implementation:
+
+>>> from math import sqrt
+
+>>> def is_prime(number):
+...     if not isinstance(number, int):
+...         raise TypeError(
+...             f"integer number expected, got {type(number).__name__}"
+...         )
+...     if number < 2:
+...         raise ValueError(f"integer above 1 expected, got {number}")
+...     for candidate in range(2, int(sqrt(number)) + 1):
+...         if number % candidate == 0:
+...             return False
+...     return True
+...
+
+>>> is_prime(2)
+True
+
+>>> is_prime(1)
+Traceback (most recent call last):
+    ...
+ValueError: integer above 1 expected, got 1
+
+>>> is_prime(10)
+False
+
+In this function, you first check if the input number isn’t an instance of int, in which case you raise a TypeError exception. Then, you check if the input number is less than 2, raising a ValueError if the condition is True. Both if statements check for conditions that would cause errors during the function’s core functionality, implemented in the loop. In both situations, the raise statement immediately jumps out of the function.
+The with Statement
+
+Python’s with statement allows you to leverage context managers in your code. A context manager is an object that creates a context that lets you control setup and teardown tasks, such as closing open files, releasing network connections, and so on.
+
+When you enter the context, the setup tasks run automatically. Similarly, when you exit the context, the teardown tasks run. So, you’re not only sequentially running the code inside the context. You’re also running code defined in a different part of your program.
+
+Note: To learn more about with, check out the Context Managers and Python’s with Statement tutorial.
+
+Arguably, the most popular use case of with is for working with files using the built-in open() function. The following code creates a file and writes some text into it:
+
+>>> with open("example.txt", mode="w", encoding="utf-8") as file:
+...     file.write("Hello, World!")
+...
+13
+
+The open() function returns a context manager. Its setup logic consists of opening the file and assigning the resulting file object to the variable after the as keyword. Inside the context—represented by the indented code—you write some text to the file.
+
+After you finish processing the file, the context manager runs the teardown logic that consists of closing the file and releasing the corresponding resources. The number 13 that appears in the output is the return value from file.write(), indicating the number of characters successfully written to the file.
+
+In short, the execution flow of your program jumps to the code of the file object, which is defined somewhere in the Python standard library. Then, it comes back to your code and runs the indented block. Finally, the execution flow jumps again to the code of the file object to properly close the physical file.
+
+Using try … except Blocks to Control Flow
+
+In real-world programming, things can go wrong. Files might not exist, user input may be invalid, network connections can fail unexpectedly, and so on. If you don’t handle these situations gracefully, then your code may crash or behave unpredictably.
+
+Python’s try … except statement gives you a structured way to handle errors and exceptions when they occur. You can catch specific exceptions, take corrective action, or fail gracefully with a helpful message. However, those are only the core tasks that you can do with try … except blocks. In Python, you’ll often use this statement as a control flow structure.
+
+Note: Python code often favors the EAFP (easier to ask forgiveness than permission) coding style based on exceptions, over the LBYL (look before you leap) style based on conditionals. This practice may sound weird to people who come from other languages, but you know, Python is different.
+
+In general, exceptions should be used to handle truly unexpected situations. For everything else, clear and explicit control flow is the better choice, since using exceptions for control flow can make your code harder to read and understand.
+
+This section will show you how to write more robust and reliable programs by anticipating and managing errors in a clean, readable way.
+Handling Errors With try … except Blocks
+
+The try statement is Python’s mechanism that allows you to catch exceptions that can occur in your code and gracefully handle them. The statement’s basic syntax is as shown below:
+
+try:
+    <main_block>
+except exception_0[ as error_0]:
+    <response_block_0>
+except exception_1[ as error_1]:
+    <response_block_1>
+...
+except exception_n[ as error_n]:
+    <response_block_n>
+
+The try keyword starts the statement that immediately jumps into an indented block. In this block, you’ll place the error-prone code that could raise an exception under certain conditions. Ideally, this code block should be short, containing only the code that can cause the issue you’re trying to handle.
+
+Note: You should keep the code block under the try keyword short and focused. If you include code that’s not directly connected with the issue you’re handling, then that code could raise a completely different exception, causing your handling strategy to fail.
+
+The except keyword catches the specified exception type if it occurs during the execution of your error-prone code. You can have as many except clauses as you need, which is useful when your code has the potential to raise multiple different exceptions, and you need to respond differently to each of them.
+
+A good example of using the try statement to control the execution flow of a program is when you want to work with a file and want to ensure it exists. You can do this with a conditional that checks whether the file exists. However, in some situations, your code can fail because there’s a time gap between the check and the actual file manipulation.
+
+In this situation, instead of using a conditional, you can use a try statement:
+
+from pathlib import Path
+
+file_path = Path("/path/to/file.txt")
+
+try:
+    with file_path.open() as file:
+        print(file.read())
+except OSError as e:
+    print("file not found")
+
+In this example, you wrap the file processing in a try … except. This code jumps directly into the file manipulation tasks, removing the gap between the check and the manipulation. If the file doesn’t exist, then the code will raise an OSError exception, which you catch and handle in the except code block by printing an error message to the screen.
+
+If the code in question can raise multiple exceptions, and you want to provide specific solutions for each exception, then you can have various except blocks. In this case, you should know that the order of the declared exceptions matters because Python stops at the first matching except clause, even if there are other matching exceptions that follow.
+
+In contrast, if the code can raise multiple different exceptions, and you want to respond to all in the same way, then you can use the following syntax:
+
+try:
+    <main_block>
+except (exception_0, exception_1, ..., exception_n)[ as error]:
+    <response_block>
+
+In this case, you use a tuple of exceptions after except. If one of these exceptions occurs while your code is running, then you can use a unified solution as a response in the except block.
+
+Note: While Python currently requires multiple exception types to be enclosed in parentheses, the parentheses are optional starting with Python 3.14.
+
+To illustrate, suppose you’re reading product prices from a shopping cart system, and some prices might be wrong:
+
+>>> cart = [
+...     {"item": "Book", "price": "15"},
+...     {"item": "Pen", "price": "free"},
+...     {"item": "Notebook", "price": None},
+... ]
+
+In this data, the prices of pens and notebooks aren’t valid numbers. If you try to make calculations with these values, then you’ll get an error, and your code will fail. You need to handle this situation to ensure the prices are valid integer numbers before proceeding with further processing.
+
+In this scenario, you can use the built-in int() function to convert the data into an integer. This function can raise two exceptions:
+
+    ValueError when the argument can’t be parsed as an integer, like the "free" string above.
+    TypeError when the argument’s type isn’t supported, like the None object above.
+
+So, you need to catch both exceptions in your code. However, you’ll respond in the same way in both situations—you’ll only display an error on the screen. Here’s the code for this:
+
+>>> for product in cart:
+...     try:
+...         price = int(product["price"])
+...     except (ValueError, TypeError) as e:
+...         print(f"Error: '{product['item']}': {e}")
+...
+Error: 'Pen': invalid literal for int() with base 10: 'free'
+Error: 'Notebook': int() argument must be a string, a bytes-like object
+⮑ or a real number, not 'NoneType'
+
+When your code processes the price of pens, it raises a ValueError because int() can’t convert the "free" string to a number. Likewise, when the code processes the price of notebooks, it raises a TypeError because None isn’t a supported type. In both situations, you respond with the same strategy: printing an error message to the screen.
+
+Running Post-Success Code With the else Clause
+
+The try statement has optional else and finally clauses as part of its syntax. The else clause runs only if no exceptions are raised in the try block.
+
+Here’s the syntax that you must use if you need an else clause:
+
+try:
+    <main_block>
+except exception[ as error]:
+    <response_block>
+...
+else:
+    <block>
+
+In practice, the else clause is useful when you need to separate error-handling code from post-success code. Here’s a quick example that processes the user input, makes sure it’s a valid number, and displays messages according to the result:
+user_input.py
+
+user_input = input("Enter an integer number: ")
+
+try:
+    number = int(user_input)
+except ValueError as e:
+    print(f"Error: {e}")
+else:
+    print(f"Success: you entered {number}")
+
+In this example, you use the input() function to grab the user input on the command line. Then, you attempt to convert the input into an integer number in the try block. If this conversion raises a ValueError, then you display an error message. If the conversion succeeds, then you print an appropriate message to inform the user.
+
+Here’s how the code works:
+
+$ python user_input.py
+Enter an integer number: 42
+Success: you entered 42
+
+$ python user_input.py
+Enter an integer number: one
+Error: invalid literal for int() with base 10: 'one'
+
+As you can see, the else clause provides a way for you to perform post-success actions in your code. These actions won’t run if the code fails.
+Cleaning Up With the finally Clause
+
+Sometimes, you may need to run clean-up actions after the exception handling code. If that’s the case, then you can use the finally clause of the try statement.
+
+The syntax for finally is shown below:
+
+# Without exception handling
+try:
+    <main_block>
+finally:
+    <block>
+
+# With exception handling
+try:
+    <main_block>
+except exception[ as error]:
+    <response_block>
+...
+finally:
+    <block>
+
+This clause allows you to run clean-up actions because it runs unconditionally. In other words, it runs regardless of whether an exception was raised or not.
+
+When you combine finally with exception handling, then it must always go last. In all cases, the finally clause can’t appear more than once.
+
+Note: In most cases, you’ll use a with statement and a context manager to automatically run clean-up actions instead of using a finally clause in a try … except block. However, there might be situations where you don’t have this option, and finally might be the way to go.
+
+Here’s an example that illustrates how to use finally. Suppose you want to create an app that makes HTTP requests to an API and needs a key to access it. Your app should take the API key from the user and store it in an environment variable. Once you finish using the app, you’d like to remove the key from your environment.
+
+Here’s a toy implementation of this hypothetical app:
+call_api.py
+
+import os
+import random
+
+def main():
+    user_key = input("Please enter your API key: ")
+    os.environ["API_KEY"] = user_key
+    print(f"Temporary API key set: {os.environ['API_KEY']}")
+
+    try:
+        run_api_call(os.environ["API_KEY"])
+    except Exception as e:
+        print(f"Error: {e}")
+    else:
+        print("API call completed successfully.")
+    finally:
+        del os.environ["API_KEY"]
+        print("API key cleaned up!")
+
+def run_api_call(api_key):
+    # Simulate an API call
+    if random.choice([True, False]):
+        print(f"Running API call with key: {api_key}")
+    else:
+        raise Exception("API call failed.")
+
+if __name__ == "__main__":
+    main()
+
+Inside main(), you ask for the user’s API key using the input() function. Next, you store the key in the API_KEY environment variable using the os.environ mapping.
+
+In the try block, you do the API call using run_api_call(). If that call raises an exception, then you print an error message to the screen. Otherwise, you display a success message using the else clause.
+
+The finally clause is where you remove the API key from your environment to make sure that it doesn’t remain active after you finish working with the application. This clause will always run, so you can rest assured that the key will be cleaned up when the app terminates.
+
+Matching Patterns With match … case
+
+Python’s match … case construct is useful for pattern matching, which allows your programs to take different actions based on the result of comparing data against patterns. The first pattern that matches will define the execution path.
+
+Note: To dive deeper into the match … case statement, check out the Structural Pattern Matching in Python tutorial.
+
+You should consider using a match … case when you want to:
+
+    Replace long chains of if and elif conditionals
+    Match data against different values, including structures like tuples or dictionaries
+    Build command dispatchers, parsers, or work with structured data, such as JSON, API responses, or abstract syntax trees (AST).
+
+The general syntax of a match … case statement in Python is as shown below:
+
+match subject:
+    case pattern_0:
+        <block_0>
+    case pattern_1:
+        <block_1>
+    ...
+    case pattern_n:
+        <block_n>
+    case _:
+        <default block>
+
+Here’s a breakdown of this syntax:
+
+    match subject: This line starts the pattern-matching block. Python evaluates subject once and tries to match it against the patterns in each case.
+    case pattern: Each case compares a pattern against the subject. If it matches, then Python runs the indented code block and skips the rest.
+    case _: This case provides a wildcard pattern. It matches anything if no earlier patterns succeed.
+
+In practice, patterns can match almost any Python object. For example, say that you need to write a function that can read different file formats, such as JSON and CSV. Each file format will demand a different setup.
+
+Here’s how you can use a match … case statement to deal with this situation gracefully:
+file_reader.py
+
+import csv
+import json
+from pathlib import Path
+
+def read_file(file_path):
+    path = Path(file_path)
+    if not path.exists():
+        print(f"File not found: {file_path}")
+        return None
+
+    with path.open(mode="r", encoding="utf-8") as file:
+        match path.suffix.lower():
+            case ".json":
+                data = json.load(file)
+                print("Loaded JSON data.")
+                return data
+            case ".csv":
+                reader = csv.DictReader(file)
+                data = list(reader)
+                print("Loaded CSV data.")
+                return data
+            case _:
+                print(f"Unsupported file type: {path.suffix}")
+                return None
+
+In this example, your read_file() function takes a file path as an argument. It converts the path to a pathlib.Path object and checks whether the file exists. If the file doesn’t exist, then you get an error message.
+
+If the file does exist, then you open it for reading using a with statement and the .open() method of the Path class. The match statement grabs the file extension using the .suffix attribute. Then, you have a case that compares the extension with the ".json" string, and another case that compares it with ".csv".
+
+If the file extension matches ".json", then you use the json module to read the file’s content. Similarly, if the file extension matches ".csv", then you use the csv module to read the file. In both cases, you return the read data.
+
+Finally, you have a case _ clause to match unsupported file formats. When you call the function with an existing file of an unsupported format, you get an error message.
+
+To try this script, you can run the following code:
+
+>>> from file_reader import read_file
+
+>>> for file_path in ["test.json", "test.csv", "test.toml", "test.txt"]:
+...     result = read_file(file_path)
+...     print(result)
+...     print()
+...
+Loaded JSON data.
+[
+    {'name': 'John', 'job': 'Software Engineer', 'country': 'USA'},
+    {'name': 'Jane', 'job': 'Data Scientist', 'country': 'Canada'}
+]
+
+Loaded CSV data.
+[
+    {'name': 'John Doe', 'job': 'Software Engineer', 'country': 'USA'},
+    {'name': 'Jane Doe', 'job': 'Data Scientist', 'country': 'Canada'}
+]
+
+File not found: test.toml
+None
+
+Unsupported file type: .txt
+None
+
+Note that this code will work if you have the listed files in your working directory. To test it with some sample data, click the Show/Hide toggle below and copy the content to the appropriate files in your current working directory.
+
+Common Pitfalls and Best Practices
+
+In this final section, you’ll learn about some common mistakes that can occur when starting with control flow structures in Python. These include unintended infinite loops, conditions that are always true or false, overly broad exception handling, and deeply nested code. Such issues can lead to bugs, poor performance, and hard-to-read code.
+
+In the following sections, you’ll explore these issues and learn how to refactor your code to fix them using Python best practices. You’ll take a look at examples of problematic or buggy code and see how to improve them.
+Unintentional Infinite Loops
+
+Infinite loops are helpful when you use them intentionally. For example, these loops are the standard when dealing with user events in GUI (graphical user interface) applications and for working with asynchronous code.
+
+Sometimes, a piece of code falls into an unintentional infinite loop. This can happen with a while loop when the loop’s exit condition never becomes false. Consider the following example of a loop that suffers from this issue.
+
+🚫 Problematic example:
+
+count = 0
+
+while count < 5:
+    print("Counting...")
+
+This loop might run forever because the count variable is never updated inside the loop. Now, take a look at the fixed version of the loop below.
+
+✅ Fixed example:
+
+count = 0
+
+while count < 5:
+    print("Counting...")
+    count += 1
+
+When you face unexpected loop behavior like the one in this example, check the loop condition and make sure it’s properly updated. Additionally, check whether the condition will become False at some point during the execution.
+Always True or False Conditions
+
+Sometimes, you can face a situation where the condition of an if statement is always true or false due to incorrect logic. Often, this happens because of minor mistakes in the condition itself. Consider the following toy example of a condition that’s always true.
+
+🚫 Problematic example:
+
+>>> def user_accepted_terms():
+...     return False  # Simulates a user who doesn't accept the terms
+...
+
+>>> if user_accepted_terms:
+...     print("Access granted.")
+... else:
+...     print("Access denied.")
+...
+Access granted.
+
+In this example, the function that’s used as the condition was never called. So, the condition consists of a function object, which is always considered true in Python. To fix this issue, you need to check the condition and add the calling parentheses.
+
+✅ Fixed example:
+
+>>> def user_accepted_terms():
+...     return False
+...
+
+>>> if user_accepted_terms():
+...     print("Access granted.")
+... else:
+...     print("Access denied.")
+...
+Access denied.
+
+In this example, you fixed the condition by calling the function. When you face a similar situation, ask yourself whether the condition ever evaluates to True or False, and double-check your assumptions.
+Wrong Order of Conditions
+
+Sometimes, elif clauses can lead to an issue where you may end up with branches that never run because the conditions are evaluated in the wrong order.
+
+For example, remember the FizzBuzz challenge, where you get fizz for numbers divisible by three, buzz for those divisible by five, and fizz buzz for those divisible by both three and five. Now, say that you follow the instructions in the same order you got them and implement the function as shown below.
+
+🚫 Problematic example:
+
+>>> def fizzbuzz(number):
+...     if number % 3 == 0:
+...         return "fizz"
+...     elif number % 5 == 0:
+...         return "buzz"
+...     elif number % 15 == 0:
+...         return "fizz buzz"
+...     else:
+...         return number
+...
+
+>>> fizzbuzz(3)
+fizz
+>>> fizzbuzz(5)
+buzz
+>>> fizzbuzz(15)
+fizz
+
+In this implementation, you use an if … elif … else construct. First, you check if the number is divisible by 3, then by 5, and finally by 3 and 5 (or 15), as the problem description stated. However, this order doesn’t work because you get fizz for 15 when you should be getting fizz buzz.
+
+How can you fix this issue? Well, you can change the order of conditions as shown in the fixed example below.
+
+✅ Fixed example:
+
+>>> def fizzbuzz(number):
+...     if number % 15 == 0:
+...         return "fizz buzz"
+...     elif number % 3 == 0:
+...         return "fizz"
+...     elif number % 5 == 0:
+...         return "buzz"
+...     else:
+...         return number
+...
+
+>>> fizzbuzz(3)
+fizz
+>>> fizzbuzz(5)
+buzz
+>>> fizzbuzz(15)
+fizz buzz
+
+In this new version, you’ve moved the condition that checks for numbers divisible by 3 and by 5 to the top of the chain. Now, the function works as expected, returning fizz buzz for 15.
+Too Broad Exceptions
+
+Using a bare except or catching broad exceptions like Exception can hide bugs, swallow useful tracebacks, and make your code hard to debug. Below is an example of how this issue can affect your code in practice.
+
+🚫 Problematic example:
+
+>>> try:
+...     number = int("abc")
+... except Exception:
+...     print("Conversion error.")
+...
+Conversion error.
+
+This code works, but it hides what went wrong and prevents you from learning more about the issues that might be affecting your code. For example, say that you call int() with None as an argument:
+
+>>> try:
+...     number = int(None)
+... except Exception as e:
+...     print("Conversion error.")
+...
+Conversion error.
+
+In this case, you get the same error message. However, this time, you’re not having a conversion error. It’s a different error because there’s no way to convert None into an integer.
+
+A deeper code analysis will reveal that you can have either a ValueError or a TypeError exception. Each of them should generate a different error message. Take a look at the example below to learn how using more specific exceptions can help you write more robust code.
+
+✅ Fixed example:
+
+>>> try:
+...     number = int("abc")
+... except ValueError:
+...     print("Error: value can't be converted to int.")
+...
+Error: value can't be converted to int.
+
+This time, you use a more specific and helpful exception. Now, what if you call int() with None again? Here’s what you get:
+
+>>> try:
+...     number = int(None)
+... except ValueError:
+...     print("Error: value can't be converted to int.")
+...
+Traceback (most recent call last):
+    ...
+TypeError: int() argument must be a string, a bytes-like object
+⮑ or a real number, not 'NoneType'
+
+In this situation, you get a TypeError exception instead of your informative error message. Now you know that your code can raise a different exception. With this knowledge, you can fix the code:
+
+>>> try:
+...     number = int(None)
+... except ValueError:
+...     print("Error: value can't be converted to int.")
+... except TypeError:
+...     print("Error: data type doesn't support int conversion")
+...
+Error: data type doesn't support int conversion
+
+In this final version, you have a specific error message for each type of exception. In general, you should catch only what you can handle. Let other exceptions surface naturally. This practice will help you debug your code and make it more robust.
+Hard-to-Read Nested Constructs
+
+Deeply nested constructs can make your code harder to read, understand, maintain, and debug. Consider the example below, which mimics a user authentication process.
+
+🚫 Problematic example:
+
+def access_account(user):
+    if user:
+        if user.is_authenticated:
+            if user.has_permission("rw"):
+                print("Full access granted")
+            else:
+                print("Permission denied")
+        else:
+            print("Please log in")
+    else:
+        print("No user provided")
+
+This function may work correctly. However, its three nesting levels make it hard to follow and obscure the intent. A flatter version will be better.
+
+✅ Fixed example:
+
+def access_account(user):
+    if not user:
+        print("No user provided")
+        return
+    if not user.is_authenticated:
+        print("Please log in")
+        return
+    if not user.has_permission("rw"):
+        print("Permission denied")
+        return
+
+    print("Full access granted")
+
+This version uses guard clauses and early return statements to improve readability, making the code’s intent more evident and easier to grasp.
+
+In practice, you should avoid more than two levels of nesting unless absolutely necessary. This recommendation applies not only to conditionals but especially to loops, where nested loops can make your code less efficient.
+Conclusion
+
+You’ve explored the fundamental concepts of control flow in Python, including how to manage the execution order in your programs using conditionals, loops, and exception handling. You also delved into more advanced topics like recursion, comprehensions, and pattern matching with match … case.
+
+Learning about control flow is essential for you as a Python developer. It allows you to write more flexible, intelligent, and dynamic programs. Understanding these concepts is crucial for developing software that can handle a variety of conditions and respond gracefully to unexpected errors.
+
+In this tutorial, you’ve learned how to:
+
+    Use conditional statements to make decisions in your code
+    Write for and while loops to repeat code blocks
+    Respond to errors with try … except blocks
+    Use structural pattern matching with match … case blocks
+
+With these skills, you’re ready to build more sophisticated Python programs that can make decisions, handle repetitive tasks, and manage errors effectively.
