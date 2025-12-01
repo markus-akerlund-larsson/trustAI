@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster._hdbscan import hdbscan
 from sklearn.decomposition import PCA
 import json
@@ -9,6 +10,8 @@ import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import normalize
 from umap import UMAP
+import seaborn as sns
+sns.set(style='white', context='poster', rc={'figure.figsize':(14,10)})
 
 np.random.seed(42)
 load_dotenv()
@@ -125,11 +128,15 @@ embeddings = normalize(embeddings)
 pca = PCA(n_components=3)
 reduced_embeddings = pca.fit_transform(embeddings)
 
-umap = UMAP(n_neighbors=15, n_components=5, metric='cosine')
+umap = UMAP(n_neighbors=6, n_components=130, metric='cosine')
 umap_embeddings = umap.fit_transform(embeddings)
 
+plt.scatter(umap_embeddings[:,0], umap_embeddings[:,1])
+plt.title('UMAP embedding of random colours');
+plt.show()
+
 cosine_hdbscan = hdbscan.HDBSCAN(
-    min_cluster_size=3,
+    min_cluster_size=10,
     metric='cosine',
 )
 
@@ -149,7 +156,7 @@ pca_clusters = group_clusters(wins, pca_labels)
 #add_summary(pca_clusters)
 save_clusters(pca_clusters, "pca.json")
 
-umap_labels = euclidean_hdbscan.fit_predict(umap_embeddings)
+umap_labels = cosine_hdbscan.fit_predict(umap_embeddings)
 umap_clusters = group_clusters(wins, umap_labels)
-#add_summary(umap_clusters)
+add_summary(umap_clusters)
 save_clusters(umap_clusters, "umap.json")

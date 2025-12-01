@@ -4,3 +4,4 @@ dotenv
 vectordb2
 matplotlib
 umap-learn
+seaborn
