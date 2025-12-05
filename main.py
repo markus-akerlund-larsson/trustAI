@@ -63,7 +63,7 @@ def get_summary(texts):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Rewrite the contents of these texts into one, coherent text of similar length. No information not contained in the is allowed in the summary. And information in the texts must be included in the summary. The texts to summarize:"},
+            {"role": "system", "content": "Rewrite the contents of these texts into one coherent text of similar length. No information not contained in the original is allowed in the summary. And all information in the texts must be included in the summary. The texts to summarize:"},
             {"role": "user", "content": "\n---\n".join(texts)}
         ]
     )
@@ -125,20 +125,6 @@ embeddings = []
 embeddings = get_embeddings(wins)
 embeddings = normalize(embeddings)
 
-pca = PCA(n_components=3)
-reduced_embeddings = pca.fit_transform(embeddings)
-
-umap = UMAP(n_neighbors=6, n_components=130, metric='cosine')
-umap_embeddings = umap.fit_transform(embeddings)
-
-plt.scatter(umap_embeddings[:,0], umap_embeddings[:,1])
-plt.title('UMAP embedding of random colours');
-plt.show()
-
-cosine_hdbscan = hdbscan.HDBSCAN(
-    min_cluster_size=10,
-    metric='cosine',
-)
 
 euclidean_hdbscan = hdbscan.HDBSCAN(
     min_cluster_size=3,
@@ -146,17 +132,56 @@ euclidean_hdbscan = hdbscan.HDBSCAN(
 )
 # silhouette score?
 
-cs_labels = cosine_hdbscan.fit_predict(embeddings)
-cs_clusters = group_clusters(wins, cs_labels)
+#cs_labels = cosine_hdbscan.fit_predict(embeddings)
+#cs_clusters = group_clusters(wins, cs_labels)
 #add_summary(cs_clusters)
-save_clusters(cs_clusters, "cosine.json")
+#save_clusters(cs_clusters, "cosine.json")
 
-pca_labels = euclidean_hdbscan.fit_predict(reduced_embeddings)
-pca_clusters = group_clusters(wins, pca_labels)
+#pca = PCA(n_components=3)
+#reduced_embeddings = pca.fit_transform(embeddings)
+#pca_labels = euclidean_hdbscan.fit_predict(reduced_embeddings)
+#pca_clusters = group_clusters(wins, pca_labels)
 #add_summary(pca_clusters)
-save_clusters(pca_clusters, "pca.json")
+#save_clusters(pca_clusters, "pca.json")
+
+best_unclustered = 900000
+best_val = 0
+best_umap_clusters = {}
+best_cosine_hdbscan = None
+no_tests = 0
+if(no_tests != 0):
+    for v in range(5, 5, 5):
+        umap = UMAP(
+            n_neighbors=2,
+            n_components=5,
+            metric='cosine')
+        cosine_hdbscan = hdbscan.HDBSCAN(
+            min_cluster_size=2,
+            metric='cosine',
+        )
+        tests = []
+        for i in range(no_tests):
+            umap_embeddings = umap.fit_transform(embeddings)
+            umap_labels = cosine_hdbscan.fit_predict(umap_embeddings)
+            tests.append(len(group_clusters(wins, umap_labels)["-1"]["texts"]))
+        unclustered = sum(tests) / no_tests
+        print("Value: " + str(v) + "\tunclustered: " + str(unclustered))
+
+#plt.scatter(umap_embeddings[:,0], umap_embeddings[:,1])
+#plt.show()
+
+umap = UMAP(
+    n_neighbors=2,
+    n_components=5,
+    metric='cosine')
+cosine_hdbscan = hdbscan.HDBSCAN(
+    min_cluster_size=5,
+    metric='cosine')
+
+umap_embeddings=umap.fit_transform(embeddings)
 
 umap_labels = cosine_hdbscan.fit_predict(umap_embeddings)
 umap_clusters = group_clusters(wins, umap_labels)
+print(len(umap_clusters["-1"]["texts"]))
 add_summary(umap_clusters)
 save_clusters(umap_clusters, "umap.json")

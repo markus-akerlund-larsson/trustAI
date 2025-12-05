@@ -5,3 +5,4 @@ vectordb2
 matplotlib
 umap-learn
 seaborn
+openai-whisper
