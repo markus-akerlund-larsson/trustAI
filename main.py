@@ -85,14 +85,19 @@ def split_all(strs, winsize=160, overlap=40):
         res += split_sliding_words(str, winsize, overlap)
     return res
 
-def group_clusters(texts, labels):
+def group_clusters(texts, labels, embeddings):
     clusters = {}
-    for text, label in zip(texts, labels):
+    for text, label, embedding in zip(texts, labels, embeddings):
         if str(label) not in clusters:
             clusters[str(label)] = {
-                "texts": [],
+                "windows": [],
             }
-        clusters[str(label)]["texts"].append(text)
+            c = {
+                "text": text,
+                "embedding": embedding.tolist(),
+                "timestamp": "placeholder",
+            }
+        clusters[str(label)]["windows"].append(c)
     return clusters
 
 def save_clusters(clusters, filename="res.json"):
@@ -103,11 +108,13 @@ def add_summary(clusters):
     countdown = 0
     for cluster, contents in clusters.items():
         if cluster == "-1":
+            clusters[cluster]["category"] = "Uncategorized"
             continue
         countdown += 1
         print(f"{countdown}/{len(clusters)}")
-        clusters[cluster]["summary"] = get_summary(contents["texts"])
-        clusters[cluster]["category"] = get_category(contents["texts"])
+        texts = [w["text"] for w in contents["windows"]]
+        clusters[cluster]["summary"] = get_summary(texts)
+        clusters[cluster]["category"] = get_category(texts)
     return clusters
 
 texter_python = load_files("./texter_python_control")
@@ -181,7 +188,15 @@ cosine_hdbscan = hdbscan.HDBSCAN(
 umap_embeddings=umap.fit_transform(embeddings)
 
 umap_labels = cosine_hdbscan.fit_predict(umap_embeddings)
-umap_clusters = group_clusters(wins, umap_labels)
-print(len(umap_clusters["-1"]["texts"]))
+umap_clusters = group_clusters(wins, umap_labels, umap_embeddings)
+##print(len(umap_clusters["-1"]["texts"]))
 add_summary(umap_clusters)
-save_clusters(umap_clusters, "umap.json")
+
+umap_cluster_file = {
+    "metadata": "placeholder",
+    "data": {
+        "Python": list(umap_clusters.values())
+    }
+}
+
+save_clusters(umap_cluster_file, "umap.json")
