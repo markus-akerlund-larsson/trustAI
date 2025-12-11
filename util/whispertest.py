@@ -40,7 +40,7 @@ def transcribe_with_whisper(audio_path: str, machine_category) -> dict:
     ✔ breath sounds
     ✔ sentence endings
     """
-    model = whisper.load_model("small")  # or "medium" 
+    model = whisper.load_model("turbo")  # or "medium"
     print(f"Transcribing: {audio_path}")
     result = model.transcribe(audio_path, verbose=False, initial_prompt=f" This is about: {machine_category}")
 
@@ -134,7 +134,7 @@ def transcribe():
         return
 
     metadata = {
-        "name": input("Name: ").strip(),
+        "name": input("Author: ").strip(),
         "category": input("Category: ").strip(),
         "date": datetime.today().strftime('%Y-%m-%d')
     }
