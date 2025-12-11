@@ -22,12 +22,11 @@ def text_placeholder(path):
 def text_placeholder_solo(path):
     return [text_placeholder(path)[2]]
 
-def load_file(category, filename):
-    # windows = whisper(filename)
-    windows = []#transcribe()
+def load_file(category):
+    windows, person_name, date, filename = transcribe()
 
     open_ai = openai_client()
-    embeddings = []#open_ai.get_embeddings(windows)
+    embeddings = open_ai.get_embeddings(windows)
 
     window_data = []
 
@@ -36,7 +35,8 @@ def load_file(category, filename):
             "text": text,
             "embedding": embedding.tolist(),
             "source_file": filename,
-            "timestamp": "00:00:00 (placeholder)",
+            "author": person_name,
+            "date": date
         })
 
 
@@ -61,11 +61,10 @@ def load_file(category, filename):
         n_components=5,
         metric='cosine')
 
-    reduced_embeddings = embeddings # umap.fit_transform(embeddings)
+    reduced_embeddings = umap.fit_transform(embeddings)
 
     clustering = hdbscan.HDBSCAN(
         min_cluster_size=3,
-        cluster_selection_epsilon=30.0,
         metric='euclidean')
 
     labels = clustering.fit_predict(reduced_embeddings)
@@ -101,4 +100,4 @@ def load_file(category, filename):
     with open("./data/database_human_readable.json", "w", encoding="utf-8") as f:
         json.dump(categories, f, ensure_ascii=False, indent=2)
 
-load_file("python", "test.wav")
+load_file("python")

@@ -127,15 +127,15 @@ def transcribe():
     DB_PATH = os.path.join(DATA_ROOT, "database.json")
     database = load_database(DB_PATH)
 
-    audio_file_name = "Video3.mp3"#input("Audio file: ").strip()
+    audio_file_name = input("Audio file: ").strip()
     audio_file = os.path.join(DATA_ROOT, "audio", audio_file_name)
     if not os.path.exists(audio_file):
         print(f"Error: File not found: {audio_file}")
         return
 
     metadata = {
-        "name": "Markus",#input("Name: ").strip(),
-        "category": "Brakes",#input("Category: ").strip(),
+        "name": input("Name: ").strip(),
+        "category": input("Category: ").strip(),
         "date": datetime.today().strftime('%Y-%m-%d')
     }
     
@@ -155,4 +155,4 @@ def transcribe():
     print("\n" + "=" * 60)
     print("Transcription complete!")
 
-    return [s["text"] for s in transcriptionData["segments"]]
+    return [s["text"] for s in transcriptionData["segments"]], metadata["name"], metadata["date"], audio_file_name
