@@ -1,19 +1,11 @@
 import os
-from dotenv import load_dotenv
-from openai import OpenAI
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster._hdbscan import hdbscan
-from sklearn.decomposition import PCA
 import json
 import numpy as np
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import normalize
 from umap import UMAP
-import seaborn as sns
-
 import util.windowing
 from util.language_model import openai_client
+from util.whispertest import transcribe
 
 np.random.seed(42)
 
@@ -27,49 +19,59 @@ def text_placeholder(path):
                 result.append(f.read())
     return result
 
+def text_placeholder_solo(path):
+    return [text_placeholder(path)[2]]
+
 def load_file(category, filename):
     # windows = whisper(filename)
-    windows = util.windowing.split_all(text_placeholder("./texter_python_control"))
+    windows = []#transcribe()
 
     open_ai = openai_client()
-    embeddings = open_ai.get_embeddings(windows)
+    embeddings = []#open_ai.get_embeddings(windows)
 
-    texts = []
+    window_data = []
 
     for text, embedding in zip(windows, embeddings):
-        texts.append({
+        window_data.append({
             "text": text,
-            "embedding": embedding,
+            "embedding": embedding.tolist(),
             "source_file": filename,
-            #"category": open_ai.get_category(text),
-            #"summary": open_ai.get_summary([text]),
             "timestamp": "00:00:00 (placeholder)",
         })
 
-    with open("/data/database.json", "r") as f:
+
+    with open("./data/database.json", "r") as f:
         database = json.load(f)
 
+    database.setdefault("metadata", {})
+    database.setdefault("data", {})
     database["data"].setdefault(category, {})
     existing = database["data"][category]
 
     for data in existing.values():
-        texts += data
+        window_data += data["windows"]
+
+    embeddings = []
+
+    for w in window_data:
+        embeddings.append(w["embedding"])
 
     umap = UMAP(
         n_neighbors=2,
         n_components=5,
         metric='cosine')
 
-    reduced_embeddings = umap.fit_transform(embeddings)
+    reduced_embeddings = embeddings # umap.fit_transform(embeddings)
 
     clustering = hdbscan.HDBSCAN(
-        min_cluster_size=5,
-        metric='cosine')
+        min_cluster_size=3,
+        cluster_selection_epsilon=30.0,
+        metric='euclidean')
 
     labels = clustering.fit_predict(reduced_embeddings)
 
     clusters = {}
-    for window, label in zip(texts, labels):
+    for window, label in zip(window_data, labels):
         category_name = str(label)
         clusters.setdefault(category_name, {
                 "windows": [],
@@ -84,11 +86,19 @@ def load_file(category, filename):
             continue
         countdown += 1
         print(f"{countdown}/{len(clusters)}")
-        texts = [w["text"] for w in data["windows"]]
-        category_name = openai_client.get_category(texts)
+        window_data = [w["text"] for w in data["windows"]]
+        category_name = open_ai.get_category(window_data)
         categories[category_name] = data
-        data["summary"] = openai_client.get_summary(texts)
+        data["summary"] = open_ai.get_summary(window_data)
 
-    with open("database2.json", "w", encoding="utf-8") as f:
+    database["data"][category] = categories
+    with open("./data/database.json", "w", encoding="utf-8") as f:
+        json.dump(database, f, ensure_ascii=False, indent=2)
+
+    for data in categories.values():
+        for window in data["windows"]:
+            window.pop("embedding")
+    with open("./data/database_human_readable.json", "w", encoding="utf-8") as f:
         json.dump(categories, f, ensure_ascii=False, indent=2)
 
+load_file("python", "test.wav")

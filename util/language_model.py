@@ -15,7 +15,6 @@ import seaborn as sns
 
 
 class openai_client:
-
     def __init__(self):
         load_dotenv()
         OpenAI.api_key = os.environ.get("OPENAI_API_KEY")
@@ -56,4 +55,4 @@ class openai_client:
                 {"role": "user", "content": "\n---\n".join(texts)}
             ]
         )
-        return response.choices[0].message.conten
+        return response.choices[0].message.content
