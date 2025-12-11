@@ -63,11 +63,14 @@ def load_file(category):
 
     reduced_embeddings = umap.fit_transform(embeddings)
 
+    print("Clustering...")
     clustering = hdbscan.HDBSCAN(
         min_cluster_size=3,
         metric='euclidean')
 
+
     labels = clustering.fit_predict(reduced_embeddings)
+
 
     clusters = {}
     for window, label in zip(window_data, labels):
@@ -77,8 +80,10 @@ def load_file(category):
             })
         clusters[str(label)]["windows"].append(window)
 
+    print("Clustering done.")
     countdown = 0
     categories = {}
+    print("Generating category names and summaries..")
     for label, data in clusters.items():
         if label == "-1":
             categories["Uncategorized"] = data
@@ -90,6 +95,7 @@ def load_file(category):
         categories[category_name] = data
         data["summary"] = open_ai.get_summary(window_data)
 
+    print("Saving database...")
     database["data"][category] = categories
     with open("./data/database.json", "w", encoding="utf-8") as f:
         json.dump(database, f, ensure_ascii=False, indent=2)
@@ -99,5 +105,7 @@ def load_file(category):
             window.pop("embedding")
     with open("./data/database_human_readable.json", "w", encoding="utf-8") as f:
         json.dump(categories, f, ensure_ascii=False, indent=2)
+
+    print("Done!")
 
 load_file("python")
