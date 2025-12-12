@@ -29,6 +29,33 @@ def clustering(embeddings, min_cluster_size=3, reduced_dimensions=5):
 
     return clustering.fit_predict(reduced_embeddings)
 
+
+def group_windows(window_data, labels):
+    clusters = {}
+    for window, label in zip(window_data, labels):
+        category_name = str(label)
+        clusters.setdefault(category_name, {
+            "windows": [],
+        })
+        clusters[str(label)]["windows"].append(window)
+    return clusters
+
+def generate_categories(clusters, llm_client):
+    countdown = 0
+    categories = {}
+    print("Generating category names and summaries..")
+    for label, win in clusters.items():
+        if label == "-1":
+            categories["Uncategorized"] = win
+            continue
+        countdown += 1
+        print(f"{countdown}/{len(clusters)}")
+        window_data = [w["text"] for w in win["windows"]]
+        category_name = llm_client.get_category(window_data)
+        categories[category_name] = win
+        win["summary"] = llm_client.get_summary(window_data)
+    return categories
+
 def main():
     database = db.load(paths.DATABASE)
 
@@ -40,52 +67,34 @@ def main():
     }
     database = db.add_metadata(database, metadata["category"], metadata)
 
+
     windows = transcribe(metadata["audio_file"], database, metadata)
 
     open_ai = openai_client()
-    embeddings = open_ai.get_embeddings(windows)
 
-    window_data = []
-
-    for text, embedding in zip(windows, embeddings):
-        window_data.append({
+    # Text windows with embeddings from the transcribed audio
+    window_data = [
+        {
             "text": text,
             "embedding": embedding.tolist(),
             "source_file": metadata["audio_file"],
             "author": metadata["author"],
             "date": metadata["date"]
-        })
+        }
+        for text, embedding in zip(windows, open_ai.get_embeddings(windows))
+    ]
 
-    existing = db.get_existing_windows(database, metadata["category"])
-    for win in existing:
+    # Load text windows with embeddings from the database
+    for win in db.get_existing_windows(database, metadata["category"]):
         window_data += win
 
     embeddings = [w["embedding"] for w in window_data]
 
     labels = clustering(embeddings)
-
-    clusters = {}
-    for window, label in zip(window_data, labels):
-        category_name = str(label)
-        clusters.setdefault(category_name, {
-                "windows": [],
-            })
-        clusters[str(label)]["windows"].append(window)
-
+    clusters = group_windows(window_data, labels)
     print("Clustering done.")
-    countdown = 0
-    categories = {}
-    print("Generating category names and summaries..")
-    for label, win in clusters.items():
-        if label == "-1":
-            categories["Uncategorized"] = win
-            continue
-        countdown += 1
-        print(f"{countdown}/{len(clusters)}")
-        window_data = [w["text"] for w in win["windows"]]
-        category_name = open_ai.get_category(window_data)
-        categories[category_name] = win
-        win["summary"] = open_ai.get_summary(window_data)
+
+    categories = generate_categories(clusters, open_ai)
 
     database["data"][metadata["category"]] = categories
 
