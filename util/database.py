@@ -2,7 +2,7 @@ import json
 import os
 
 
-def load_database(db_path: str = "metadata.json") -> dict:
+def load(db_path: str = "metadata.json") -> dict:
     if os.path.exists(db_path):
         with open(db_path, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -25,4 +25,4 @@ def get_existing_windows(database: dict, category: str) -> list:
     database.setdefault("data", {})
     database["data"].setdefault(category, {})
     existing = database["data"][category]
-    return [e["data"] for e in existing.values()]
+    return [e["windows"] for e in existing.values()]

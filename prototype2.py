@@ -30,7 +30,7 @@ def clustering(embeddings, min_cluster_size=3, reduced_dimensions=5):
     return clustering.fit_predict(reduced_embeddings)
 
 def main():
-    database = db.load_database(paths.DATABASE)
+    database = db.load(paths.DATABASE)
 
     metadata = {
         "audio_file": input("Audio file: ").strip(),
