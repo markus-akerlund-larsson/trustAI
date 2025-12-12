@@ -3,27 +3,16 @@ from sklearn.cluster._hdbscan import hdbscan
 import json
 import numpy as np
 from umap import UMAP
-import util.windowing
+import util.database as db
+from util import paths
 from util.language_model import openai_client
-from util.whispertest import transcribe
+from util.whisper import transcribe
 
 np.random.seed(42)
 
-def text_placeholder(path):
-    result = []
-    for filename in os.listdir(path):
-        file_path = os.path.join(path, filename)
-
-        if os.path.isfile(file_path):
-            with open(file_path, "r", encoding="utf-8") as f:
-                result.append(f.read())
-    return result
-
-def text_placeholder_solo(path):
-    return [text_placeholder(path)[2]]
-
 def load_file(category):
-    windows, person_name, date, filename = transcribe()
+    database = db.load_database(paths.DATABASE)
+    windows, person_name, date, filename = transcribe(database)
 
     open_ai = openai_client()
     embeddings = open_ai.get_embeddings(windows)

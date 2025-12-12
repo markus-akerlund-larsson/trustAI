@@ -1,1 +1,0 @@
-Felmeddelandet kommer upp igen, avgastemperaturen på andra steget är för hög. Blandningen är lite för mager, så temperaturen sticker iväg. Jag justerar flödet lite. Munstyckena är också sotiga. Jag rengör dem snabbt och startar igen. Temperaturen sjunker till normal nivå. Det här är tredje gången på kort tid, så vi borde logga det.
