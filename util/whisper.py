@@ -103,21 +103,12 @@ def transcribe(audio_file_name, database, metadata):
         print(f"Error: File not found: {audio_file}")
         return
 
+    transcription_data = transcribe_with_whisper(audio_file, metadata["category"])
 
-    audio_filename = os.path.basename(audio_file)
-    transcriptionData = transcribe_with_whisper(audio_file, metadata["category"])
+    metadata["transcription"] = transcription_data
 
-    session = {
-        "name": metadata["name"],
-        "audio_file": audio_file_name,
-        "date": metadata["date"],
-        "transcription": transcriptionData,
-    }
-
-    database = db.add_session(database, metadata, session)
-    db.save(database, paths.DATABASE)
 
     print("\n" + "=" * 60)
     print("Transcription complete!")
 
-    return [s["text"] for s in transcriptionData["segments"]], metadata["name"], metadata["date"]
+    return [s["text"] for s in transcription_data["segments"]]

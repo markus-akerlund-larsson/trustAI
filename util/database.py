@@ -15,9 +15,14 @@ def save(database: dict, db_path: str = "database.json") -> None:
     print(f"Database saved: {db_path}")
 
 
-def add_session(database: dict, metadata: dict, session_data: dict) -> dict:
-    category = metadata["category"]
+def add_metadata(database: dict, category, metadata: dict) -> dict:
     database.setdefault("metadata", {})
     database["metadata"].setdefault(category, {})
-    database["metadata"][category][session_data["audio_file"]] = session_data
+    database["metadata"][category][metadata["audio_file"]] = metadata
     return database
+
+def get_existing_windows(database: dict, category: str) -> list:
+    database.setdefault("data", {})
+    database["data"].setdefault(category, {})
+    existing = database["data"][category]
+    return [e["data"] for e in existing.values()]
