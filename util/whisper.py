@@ -1,7 +1,6 @@
 import whisper
 import json
 import os
-from datetime import datetime
 import util.database as db
 from util import paths
 
@@ -97,21 +96,14 @@ def combine_segments(segments: list, max_words: int = 120) -> list:
 
 # -------------------- Main --------------------
 
-def transcribe(database):
+def transcribe(audio_file_name, database, metadata):
 
-
-    audio_file_name = input("Audio file: ").strip()
     audio_file = os.path.join(paths.DATA_ROOT, "audio", audio_file_name)
     if not os.path.exists(audio_file):
         print(f"Error: File not found: {audio_file}")
         return
 
-    metadata = {
-        "name": input("Author: ").strip(),
-        "category": input("Category: ").strip(),
-        "date": datetime.today().strftime('%Y-%m-%d')
-    }
-    
+
     audio_filename = os.path.basename(audio_file)
     transcriptionData = transcribe_with_whisper(audio_file, metadata["category"])
 
@@ -122,10 +114,10 @@ def transcribe(database):
         "transcription": transcriptionData,
     }
 
-    database = db.add_session(database, metadata, audio_filename, session)
+    database = db.add_session(database, metadata, session)
     db.save(database, paths.DATABASE)
 
     print("\n" + "=" * 60)
     print("Transcription complete!")
 
-    return [s["text"] for s in transcriptionData["segments"]], metadata["name"], metadata["date"], audio_file_name
+    return [s["text"] for s in transcriptionData["segments"]], metadata["name"], metadata["date"]

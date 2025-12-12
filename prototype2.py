@@ -7,12 +7,22 @@ import util.database as db
 from util import paths
 from util.language_model import openai_client
 from util.whisper import transcribe
+from datetime import datetime
 
 np.random.seed(42)
 
-def load_file(category):
+def main():
     database = db.load_database(paths.DATABASE)
-    windows, person_name, date, filename = transcribe(database)
+
+    filename = input("Audio file: ").strip()
+
+    metadata = {
+        "name": input("Author: ").strip(),
+        "category": input("Category: ").strip(),
+        "date": datetime.today().strftime('%Y-%m-%d')
+    }
+
+    windows, person_name, date = transcribe(filename, database, metadata)
 
     open_ai = openai_client()
     embeddings = open_ai.get_embeddings(windows)
@@ -28,14 +38,10 @@ def load_file(category):
             "date": date
         })
 
-
-    with open("./data/database.json", "r") as f:
-        database = json.load(f)
-
     database.setdefault("metadata", {})
     database.setdefault("data", {})
-    database["data"].setdefault(category, {})
-    existing = database["data"][category]
+    database["data"].setdefault(metadata["category"], {})
+    existing = database["data"][metadata["category"]]
 
     for data in existing.values():
         window_data += data["windows"]
@@ -85,7 +91,7 @@ def load_file(category):
         data["summary"] = open_ai.get_summary(window_data)
 
     print("Saving database...")
-    database["data"][category] = categories
+    database["data"][metadata["category"]] = categories
     with open("./data/database.json", "w", encoding="utf-8") as f:
         json.dump(database, f, ensure_ascii=False, indent=2)
 
@@ -97,4 +103,5 @@ def load_file(category):
 
     print("Done!")
 
-load_file("python")
+if __name__ == "__main__":
+    main()
