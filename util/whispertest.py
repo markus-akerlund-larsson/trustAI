@@ -40,7 +40,7 @@ def transcribe_with_whisper(audio_path: str, machine_category) -> dict:
     ✔ breath sounds
     ✔ sentence endings
     """
-    model = whisper.load_model("turbo")  # or "medium"
+    model = whisper.load_model("small")  # or "medium"
     print(f"Transcribing: {audio_path}")
     result = model.transcribe(audio_path, verbose=False, initial_prompt=f" This is about: {machine_category}")
 
